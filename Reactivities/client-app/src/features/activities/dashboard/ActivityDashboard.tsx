@@ -29,4 +29,4 @@ export const ActivityDashboard: React.FC = () => {
   )
 }
 
-export default observer(ActivityDashboard)
+export default observer(ActivityDashboard) // see: observer(App) is important so the component can detect changes in mobx activityStore

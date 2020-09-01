@@ -67,4 +67,4 @@ export const ActivityForm: React.FC<IProps> = ({
   )
 }
 
-export default observer(ActivityForm);
+export default observer(ActivityForm); // see: observer(App) is important so the component can detect changes in mobx activityStore

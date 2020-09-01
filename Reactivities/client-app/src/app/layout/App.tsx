@@ -26,4 +26,4 @@ const App = () => {
   );
 }
 
-export default observer(App);
+export default observer(App); // see: observer(App) is important so the component can detect changes in mobx activityStore
