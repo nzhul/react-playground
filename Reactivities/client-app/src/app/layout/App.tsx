@@ -6,6 +6,7 @@ import ActivityDashboard from '../../features/activities/dashboard/ActivityDashb
 import agent from '../api/agent';
 import LoadingComponent from './LoadingComponent';
 import ActivityStore from '../stores/activityStore';
+import { observer } from 'mobx-react-lite'; // observer is higher order component
 
 const App = () => {
 
@@ -16,16 +17,6 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [target, setTarget] = useState('');
-
-  const handleSelectActivity = (id: string) => {
-    setSelectedActivity(activities.filter(a => a.id === id)[0]);
-    setEditMode(false);
-  }
-
-  const handleOpenCreateForm = () => {
-    setSelectedActivity(null);
-    setEditMode(true);
-  }
 
   const handleCreateActivity = (activity: IActivity) => {
     setSubmitting(true);
@@ -55,33 +46,20 @@ const App = () => {
 
 
   useEffect(() => {
-    agent.Activities.list()
-      .then((response) => {
-        let activities: IActivity[] = [];
-        response.forEach(activity => {
-          activity.date = activity.date.split('.')[0];
-          activities.push(activity);
-        })
-        setActivities(activities)
-      }).then(() => setLoading(false));
-  }, [])
+    activityStore.loadActivities();
+  }, [activityStore])
 
-  if (loading) {
+  if (activityStore.loadingInitial) {
     return <LoadingComponent content='Loading activities ...' />
   }
 
   return (
     <Fragment>
-      <NavBar openCreateForm={handleOpenCreateForm} />
+      <NavBar />
       <Container style={{ marginTop: '7em' }}>
         <ActivityDashboard
-          activities={activities}
-          selectActivity={handleSelectActivity}
-          selectedActivity={selectedActivity}
-          editMode={editMode}
           setEditMode={setEditMode}
           setSelectedActivity={setSelectedActivity}
-          createActivity={handleCreateActivity}
           editActivity={handleEditActivity}
           deleteActivity={handleDeleteActivity}
           submitting={submitting}
@@ -91,4 +69,4 @@ const App = () => {
   );
 }
 
-export default App;
+export default observer(App);
