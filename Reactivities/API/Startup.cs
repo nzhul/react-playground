@@ -1,3 +1,4 @@
+using API.Middleware;
 using Application.Activities;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -49,7 +50,8 @@ namespace API
     {
       if (env.IsDevelopment())
       {
-        app.UseDeveloperExceptionPage();
+        // app.UseDeveloperExceptionPage();
+        app.UseMiddleware<ErrorHandlingMiddleware>();
       }
 
       // app.UseHttpsRedirection();

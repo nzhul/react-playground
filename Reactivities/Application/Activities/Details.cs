@@ -1,6 +1,8 @@
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Errors;
 using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +28,15 @@ namespace Application.Activities
 
       public async Task<Activity> Handle(Query request, CancellationToken cancellationToken)
       {
-        return await _context.Activities.FirstOrDefaultAsync(x => x.Id == request.Id);
+        
+        var activity = await _context.Activities.FirstOrDefaultAsync(x => x.Id == request.Id);
+
+        if (activity == null)
+        {
+          throw new RestException(HttpStatusCode.NotFound, new { activity = "Not Found" });
+        }
+
+        return activity;
       }
     }
   }
