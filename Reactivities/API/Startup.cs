@@ -2,6 +2,7 @@ using System.Text;
 using API.Middleware;
 using Application.Activities;
 using Application.Interfaces;
+using AutoMapper;
 using Domain;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -36,6 +37,9 @@ namespace API
     {
       services.AddDbContext<DataContext>(opt =>
       {
+        // [dido] this is an alternative for eager loading `.Include().ThenInclude()`. 
+        // Comes from Microsoft.EntityFrameworkCore.Proxies package in Persistance/ project
+        opt.UseLazyLoadingProxies();
         opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
       });
 
@@ -50,6 +54,7 @@ namespace API
       });
 
       services.AddMediatR(typeof(List.Handler).Assembly);
+      services.AddAutoMapper(typeof(List.Handler));
       services.AddControllers(opt =>
       {
         var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
@@ -61,6 +66,16 @@ namespace API
       var identityBuilder = new IdentityBuilder(builder.UserType, builder.Services);
       identityBuilder.AddEntityFrameworkStores<DataContext>();
       identityBuilder.AddSignInManager<SignInManager<AppUser>>();
+
+      services.AddAuthorization(opt =>
+      {
+        opt.AddPolicy("IsActivityHost", policy =>
+        {
+          policy.Requirements.Add(new IsHostRequirement());
+        });
+      });
+
+      services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
 
       var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
 
