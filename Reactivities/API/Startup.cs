@@ -6,6 +6,7 @@ using AutoMapper;
 using Domain;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Infrastructure.Photos;
 using Infrastructure.Security;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -77,6 +78,7 @@ namespace API
 
       services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
 
+      //[dido]: `TokenKey` is stored in dotnet user-secrets
       var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
 
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -92,6 +94,8 @@ namespace API
         });
       services.AddScoped<IJwtGenerator, JwtGenerator>();
       services.AddScoped<IUserAccessor, UserAccessor>();
+      services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+      services.Configure<CloudinarySettings>(Configuration.GetSection("Cloudinary")); //[dido]: `Cloudinary` section is stored in dotnet user-secrets
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
