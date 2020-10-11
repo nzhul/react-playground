@@ -1,0 +1,3 @@
+-- CREATE USER 'appuser'@'localhost' IDENTIFIED WITH mysql_native_password BY 'admin';
+-- GRANT ALL PRIVILEGES ON *.* TO 'appuser'@'localhost' WITH GRANT OPTION;
+-- FLUSH PRIVILEGES;

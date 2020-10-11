@@ -1,0 +1,2 @@
+--BUILD FOR PROD:
+npm run build

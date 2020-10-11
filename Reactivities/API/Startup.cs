@@ -37,8 +37,7 @@ namespace API
 
     public IConfiguration Configuration { get; }
 
-    // This method gets called by the runtime. Use this method to add services to the container.
-    public void ConfigureServices(IServiceCollection services)
+    public void ConfigureDevelopmentServices(IServiceCollection services)
     {
       services.AddDbContext<DataContext>(opt =>
       {
@@ -48,6 +47,25 @@ namespace API
         opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
       });
 
+      ConfigureServices(services);
+    }
+
+    public void ConfigureProductionServices(IServiceCollection services)
+    {
+      services.AddDbContext<DataContext>(opt =>
+      {
+        // [dido] this is an alternative for eager loading `.Include().ThenInclude()`. 
+        // Comes from Microsoft.EntityFrameworkCore.Proxies package in Persistance/ project
+        opt.UseLazyLoadingProxies();
+        opt.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
+      });
+
+      ConfigureServices(services);
+    }
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
       services.AddCors(opt =>
       {
         opt.AddPolicy("CorsPolicy", policy =>
