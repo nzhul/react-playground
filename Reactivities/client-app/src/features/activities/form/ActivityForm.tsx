@@ -49,11 +49,12 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
   useEffect(() => {
     if (match.params.id) {
       setLoading(true);
-      loadActivity(match.params.id).then(
-        (activity) => setActivity(new ActivityFormValues(activity))
-      ).finally(() => {
-        setLoading(false);
-      });
+      loadActivity(match.params.id)
+        .then(
+          (activity) => setActivity(new ActivityFormValues(activity))
+        ).finally(() => {
+          setLoading(false);
+        });
     }
   }, [
     loadActivity,
