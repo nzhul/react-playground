@@ -38,7 +38,7 @@ namespace Application.User
       private readonly IJwtGenerator _jwtGenerator;
 
       public Handler(
-        UserManager<AppUser> userManager, 
+        UserManager<AppUser> userManager,
         SignInManager<AppUser> signInManager,
         IJwtGenerator jwtGenerator)
       {
@@ -58,14 +58,11 @@ namespace Application.User
 
         if (result.Succeeded)
         {
-          // TODO: generate token
-          return new User
-          {
-            DisplayName = user.DisplayName,
-            Token = _jwtGenerator.Createtoken(user),
-            Username = user.UserName,
-            Image = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
-          };
+          var refreshToken = _jwtGenerator.GenerateRefreshToken();
+          user.RefreshTokens.Add(refreshToken);
+          await _userManager.UpdateAsync(user);
+
+          return new User(user, _jwtGenerator, refreshToken.Token);
         }
 
         throw new RestException(HttpStatusCode.Unauthorized);
