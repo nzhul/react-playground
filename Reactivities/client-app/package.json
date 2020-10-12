@@ -22,6 +22,7 @@
     "final-form": "^4.16.1",
     "mobx": "^5.15.6",
     "mobx-react-lite": "^2.2.0",
+    "query-string": "^6.13.5",
     "react": "^16.13.1",
     "react-cropper": "^1.2.0",
     "react-dom": "^16.13.1",
